@@ -1,8 +1,11 @@
 use std::io::{Write, stdin, stdout};
-
 fn main() {
     let mut user_input: String = String::default();
     let word: &str = "apple";
+    let mut qwinc: usize = 0;
+    let mut user_space: usize = 0;
+    let mut answer_array: [usize; 6] = [0, 0, 0, 0, 0, 0]; // 1 green 2, yellow, 3 grey
+    
     // validate if check to make user_input allowed
     for qua in 0..6 {
         user_input.clear();
@@ -11,24 +14,37 @@ fn main() {
         stdin().read_line(&mut user_input).expect("iiii know");
         println!("Your input: {user_input}");
         while user_input.trim().chars().count() != 5 {
+            user_input.clear();
             println!("Error: Please enter a 5 character word");
             print!("Guess word guess number {qua}: ");
             stdout().flush().expect("aa");
             stdin().read_line(&mut user_input).expect("iiii know");
             println!("Your input: {user_input}");
         }
-        wmatch(&user_input, &word);
+        qwinc = wmatch(&user_input, &word, answer_array);
+        println!("qwinc: {qwinc}");
+
+        if qwinc == 5 {
+            println!("You won! Word is: {word}");
+            break;
+        }
+    }
+    if qwinc != 5 {
+        println!("You lost! Word is: {word}");
     }
 }
-fn wmatch<'a>(user_input: &'a String, word: &'a str) {
-    let mut user_space: usize = 0;
+fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6]) -> usize {
     let mut increment_space: usize = 0;
     let mut yarray_pos: usize = 0;
+    let mut qwinc: usize = 0;
     let mut yelcheck: usize = 0;
+    let mut user_space: usize = 0;
     let mut yellow_array: [usize; 5] = [5, 5, 5, 5, 5];
     let mut green_array: [usize; 5] = [5, 5, 5, 5, 5];
-    let mut answer_array: [usize; 6] = [0, 0, 0, 0, 0, 0]; // 1 green 2, yellow, 3 grey
 
+    if user_space == 5 {
+        println!("You lost! Word is: {word}");
+    }
     while user_space < 5 {
         if user_input.trim().chars().nth(user_space) == word.chars().nth(user_space) {
             green_array[user_space] = 9;
@@ -93,15 +109,11 @@ fn wmatch<'a>(user_input: &'a String, word: &'a str) {
         if user_space == 5 {
             for b in 0..5 {
                 println!("Result: {}", answer_array[b]);
+                if answer_array[b] == 1 {
+                    qwinc = qwinc + 1
+                }
             }
         }
     }
-    // for b in 0..5 {
-    //    println!("final array pos {b} is {}", answer_array[b])
-    // }
+    return qwinc;
 }
-
-//if user_input.trim() == word.chars().nth(i)
-//  for i = 0; 1 < 5; i++; {
-//  if user_input.trim().chars().nth(i) == word.chars().nth(i) {green}
-// else if user_input.trim().chars().nth(i) == for i =0; 1 < 5; i++ word.chars().nth(i) {yellow} else {grey}
