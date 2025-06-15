@@ -1,2 +1,2 @@
 Wordle written in rust, played in the console!
-V1.0
+v1.0
