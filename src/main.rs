@@ -1,11 +1,24 @@
 use std::io::{Write, stdin, stdout};
+use std::fs::read_to_string;
+use rand::prelude::*;
+
 fn main() {
+    let mut rng = rand::rng();
     let mut user_input: String = String::default();
-    let word: &str = "apple";
+    let final_possible: Vec<String> = read_to_string("answers.txt")
+        .unwrap()
+        .lines()
+        .map(String::from)
+        .collect();
+    let answer_index: usize = rng.random_range(0..final_possible.len());
+    let word: String = final_possible[answer_index].clone();
     let mut qwinc: usize = 0;
-    let mut user_space: usize = 0;
     let mut answer_array: [usize; 6] = [0, 0, 0, 0, 0, 0]; // 1 green 2, yellow, 3 grey
-    
+    let words: Vec<String> = read_to_string("enterable.txt")
+        .unwrap()
+        .lines()
+        .map(String::from)
+        .collect();
     // validate if check to make user_input allowed
     for qua in 0..6 {
         user_input.clear();
@@ -15,7 +28,7 @@ fn main() {
         println!("Your input: {user_input}");
         while user_input.trim().chars().count() != 5 {
             user_input.clear();
-            println!("Error: Please enter a 5 character word");
+            println!("Error: Please enter a 5 character word or a real word");
             print!("Guess word guess number {qua}: ");
             stdout().flush().expect("aa");
             stdin().read_line(&mut user_input).expect("iiii know");
@@ -23,7 +36,9 @@ fn main() {
         }
         qwinc = wmatch(&user_input, &word, answer_array);
         println!("qwinc: {qwinc}");
-
+        if words.contains(&user_input) {
+            println!("YAYAYAYAYAYAYYAY");
+        }
         if qwinc == 5 {
             println!("You won! Word is: {word}");
             break;
@@ -33,7 +48,7 @@ fn main() {
         println!("You lost! Word is: {word}");
     }
 }
-fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6]) -> usize {
+fn wmatch<'a>(user_input: &'a String, word: &'a String, mut answer_array: [usize; 6]) -> usize {
     let mut increment_space: usize = 0;
     let mut yarray_pos: usize = 0;
     let mut qwinc: usize = 0;
@@ -49,7 +64,6 @@ fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6
         if user_input.trim().chars().nth(user_space) == word.chars().nth(user_space) {
             green_array[user_space] = 9;
             increment_space = user_space + 1;
-            //  println!("you have a green at spot {increment_space}"); // not needed
         } else {
         }
         user_space = user_space + 1;
@@ -59,7 +73,6 @@ fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6
         let mut compare_sapce: usize = 0;
         if user_input.trim().chars().nth(user_space) == word.chars().nth(user_space) {
             increment_space = user_space + 1;
-            //println!("you have a green at spot {increment_space}");
             answer_array[user_space] = 1;
         } else {
             compare_sapce = 0;
@@ -70,11 +83,9 @@ fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6
                 let mut x: usize = 0;
                 while x < 5 {
                     if green_array[x] == 9 {
-                        //println!("!!!!green found at yellow array pos, {x}"); //debug line
                         found_yellow = true;
                         break;
                     } else {
-                        // println!("x = {x}"); // debug line
                         x = x + 1
                     }
                 }
@@ -93,18 +104,15 @@ fn wmatch<'a>(user_input: &'a String, word: &'a str, mut answer_array: [usize; 6
                     }
                     yellow_array[yarray_pos] = compare_sapce;
                     yarray_pos = yarray_pos + 1;
-                    //println!("You found a yellow at spot {increment_space}");
                     answer_array[user_space] = 2;
                     compare_sapce = 6;
                 }
             }
             if compare_sapce != 6 {
-                //println!("You found a gray at spot {increment_space}");
                 answer_array[user_space] = 3;
             }
         }
         user_space = user_space + 1;
-        // println!("i = {user_space}");
 
         if user_space == 5 {
             for b in 0..5 {
