@@ -27,8 +27,8 @@ fn main() {
         stdout().flush().expect("aa");
         stdin().read_line(&mut user_input).expect("iiii know");
         println!("Your input: {user_input}");
-        while user_input.trim().chars().count() != 5 {
-            user_input.clear();
+        while user_input.trim().chars().count() != 5 || !words.contains(&user_input.trim().to_string()) { // checks if 5 characters and if it is a real word
+        user_input.clear();
             println!("Error: Please enter a 5 character word or a real word");
             print!("Guess word guess number {qua}: ");
             stdout().flush().expect("aa");
