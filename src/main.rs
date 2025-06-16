@@ -1,5 +1,5 @@
-use std::io::{Write, stdin, stdout};
 use std::fs::read_to_string;
+use std::io::{Write, stdin, stdout};
 use rand::prelude::*;
 
 fn main() {
@@ -13,7 +13,7 @@ fn main() {
     let answer_index: usize = rng.random_range(0..final_possible.len());
     let word: String = final_possible[answer_index].clone();
     let mut qwinc: usize = 0;
-    let mut answer_array: [usize; 6] = [0, 0, 0, 0, 0, 0]; // 1 green 2, yellow, 3 grey
+    let answer_array: [usize; 6] = [0, 0, 0, 0, 0, 0]; // 1 green 2, yellow, 3 grey
     let words: Vec<String> = read_to_string("enterable.txt")
         .unwrap()
         .lines()
@@ -22,6 +22,7 @@ fn main() {
     // validate if check to make user_input allowed
     for qua in 0..6 {
         user_input.clear();
+        println!("debug: {word}");
         print!("Guess word guess number {qua}: ");
         stdout().flush().expect("aa");
         stdin().read_line(&mut user_input).expect("iiii know");
@@ -49,7 +50,6 @@ fn main() {
     }
 }
 fn wmatch<'a>(user_input: &'a String, word: &'a String, mut answer_array: [usize; 6]) -> usize {
-    let mut increment_space: usize = 0;
     let mut yarray_pos: usize = 0;
     let mut qwinc: usize = 0;
     let mut yelcheck: usize = 0;
@@ -63,7 +63,6 @@ fn wmatch<'a>(user_input: &'a String, word: &'a String, mut answer_array: [usize
     while user_space < 5 {
         if user_input.trim().chars().nth(user_space) == word.chars().nth(user_space) {
             green_array[user_space] = 9;
-            increment_space = user_space + 1;
         } else {
         }
         user_space = user_space + 1;
@@ -72,13 +71,11 @@ fn wmatch<'a>(user_input: &'a String, word: &'a String, mut answer_array: [usize
     while user_space < 5 {
         let mut compare_sapce: usize = 0;
         if user_input.trim().chars().nth(user_space) == word.chars().nth(user_space) {
-            increment_space = user_space + 1;
             answer_array[user_space] = 1;
         } else {
             compare_sapce = 0;
             while compare_sapce < 5 {
                 let mut found_yellow: bool = false;
-                increment_space = user_space + 1;
                 compare_sapce = compare_sapce + 1;
                 let mut x: usize = 0;
                 while x < 5 {
